@@ -1,0 +1,15 @@
+FROM mcr.microsoft.com/devcontainers/typescript-node:1-20-bullseye
+
+WORKDIR /workspace
+
+COPY react-app/package*.json .
+
+RUN npm install -g npm@latest && \
+    npm install
+
+COPY react-app /workspace/
+RUN npm run build
+
+EXPOSE 4173
+
+CMD ["npm", "run", "preview"]
