@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 import joblib
 import uuid
 import datetime
-from pymongo import MongoClient
+from pymongo import MongoClient, errors
 
 app = Flask(__name__)
 
@@ -47,7 +47,10 @@ def predict():
     except errors.PyMongoError as e:
         print(f"Could not insert into MongoDB: {e}")
         return jsonify({"error": "Could not save prediction to database"}), 500
-
+    
+    # returnする前に"_id"を削除しておく。
+    # mongodbの"_id"をjsonに変換できないため。
+    del result["_id"]
     return jsonify(result)
 
 
