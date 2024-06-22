@@ -7,7 +7,7 @@ spec:
   selector:
     matchLabels:
       app: flask-app
-  replicas: 1
+  replicas: 3
   template:
     metadata:
       labels:
@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
       - name: flask-app
-        image: my-application/flask-app:0.0.1  # 後ほど作成するDockerイメージの名前
+        image: my-application/flask-app:0.0.1
         ports:
         - containerPort: 5000
         env:

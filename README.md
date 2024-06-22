@@ -1,6 +1,6 @@
 # kurbenetes
 
-## nginx
+## nginxを用いた動作チェック
 
 ```
 minikube start
@@ -31,24 +31,29 @@ kubectl delete -f pod-nginx.yaml
 ```
 
 
-## reactアプリ
+## flask, mongodbを用いた機械学習推論アプリ
 
-frontendのimageをビルドする
+imageをビルドする
 ```
-cd frontend
-docker build -t my-application/react-app .
-docker tag my-application/react-app my-application/react-app:0.0.1
-cd ..
+docker build -t my-application/react-app:0.0.1 ./frontend/
+docker build -t my-application/flask-app:0.0.1 ./flask-app/
 ```
 
 minikubeのdockerレジストリにimageをプッシュする
 ```
 minikube image load my-application/react-app:0.0.1
+minikube image load my-application/flask-app:0.0.1
 ```
 
-Pod，Serviceをデプロイ
+デプロイ
 ```
-kubectl delete -f pod-reactapp.yaml
+kubectl apply -f k8s/namespace.yaml
+kubectl apply -f k8s/flask-app-deployment.yaml,k8s/mongodb-deployment.yaml
+```
+
+Podが起動したか確認する
+```
+kubectl get pod -A
 ```
 
 サービスを確認
@@ -56,7 +61,23 @@ kubectl delete -f pod-reactapp.yaml
 minikube service list
 ```
 
-導通確認
+リクエストを投げてみる
+うまくいくと予測結果が返る
 ```
-curl http://192.168.49.2:30080 
+curl http://192.168.49.2:30050/predict -H "Content-Type: application/json" -d '{"input": [10.0]}' 
+```
+
+namespaceごと削除する
+```
+kubectl delete namespaces web-flask-api 
+```
+
+
+トラブルシューティング
+```
+# Podのログを確認する
+kubectl logs {Pod名} -n web-flask-api
+
+# Podにアタッチする
+kubectl exec -it {Pod名} -n web-flask-api -- /bin/bash
 ```

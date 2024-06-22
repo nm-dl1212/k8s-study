@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+import os
 import joblib
 import uuid
 import datetime
@@ -6,10 +7,12 @@ from pymongo import MongoClient, errors
 
 app = Flask(__name__)
 
+#環境変数
+MONGO_URI = os.environ.get("MONGO_URI")
 
 # MongoDBの設定
 try:
-    client = MongoClient("mongodb://mongodb-service:27017/")
+    client = MongoClient(MONGO_URI)
     db = client["prediction_db"]
     collection = db["predictions"]
     client.admin.command('ping')  # 接続テスト
@@ -30,13 +33,14 @@ def predict():
     input_data = [data["input"]]
 
     # モデルによる予測
-    prediction = model.predict(input_data)[0]
+    prediction = model.predict(input_data)
 
     # 結果の作成
     result = {
         "uuid": str(uuid.uuid4()),
         "timestamp": datetime.datetime.now().isoformat(),
-        "prediction": prediction,
+        "input": input_data,
+        "prediction": prediction.tolist(),
     }
     print(result)
 
