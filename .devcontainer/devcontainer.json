@@ -16,7 +16,14 @@
 		}
 	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	//"forwardPorts": []
+	"forwardPorts": [
+		30000,
+		30001,
+		30002,
+		30003,
+		30004,
+		30005
+	]
 	// Use 'postCreateCommand' to run commands after the container is created.
 	// "postCreateCommand": "kubectl version",
 	// Use 'postStartCommand' to run commands after the container is created like starting minikube.

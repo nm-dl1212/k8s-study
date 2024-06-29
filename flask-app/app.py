@@ -1,4 +1,5 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 import os
 import joblib
 import uuid
@@ -6,6 +7,7 @@ import datetime
 from pymongo import MongoClient, errors
 
 app = Flask(__name__)
+CORS(app)
 
 #環境変数
 MONGO_URI = os.environ.get("MONGO_URI")
@@ -57,6 +59,10 @@ def predict():
     del result["_id"]
     return jsonify(result)
 
+
+@app.route("/health", methods=["GET"])
+def health():
+    return "this is HEALTY flask-app server. Please request me via axios !"
 
 if __name__ == "__main__":
     app.run(debug=True, host="0.0.0.0")

@@ -70,3 +70,31 @@ docker run -p 4173:4173 my-application/react-app
 ```
 
 うまくいくと"http://localhost:4173"からアプリケーションにアクセスできる。
+
+
+# RESTのモックサーバーを作る
+
+flask-res-mock.jsonにレスポンスを記載する。
+ここで，最初のキーはエンドポイントとして扱われる。
+
+```
+{
+    "predict": [
+        {
+            "input": ...
+            ...
+        }
+    ]
+}
+```
+
+以下のコマンドでjsonサーバーを実行する
+```
+json-server --watch flask-res-mock.json -p 5000
+```
+
+以下のようにデータを取得する。
+```
+curl http://localhost:5000/predict
+```
+
