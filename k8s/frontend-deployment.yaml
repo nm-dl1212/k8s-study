@@ -19,8 +19,8 @@ spec:
         ports:
         - containerPort: 4173
         env:
-        - name: VITE_ML_PREDICT_URI
-          value: "http://localhost:30000"
+        - name: VITE_FLASK_APP_URI
+          value: "http://flask-app-service:5000"
 ---
 apiVersion: v1
 kind: Service

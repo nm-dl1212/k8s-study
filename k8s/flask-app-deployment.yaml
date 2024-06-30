@@ -28,11 +28,10 @@ metadata:
   name: flask-app-service
   namespace: web-flask-api
 spec:
-  type: NodePort
+  type: ClusterIP
   selector:
     app: flask-app
   ports:
   - protocol: TCP
     port: 5000
     targetPort: 5000
-    nodePort: 30500
