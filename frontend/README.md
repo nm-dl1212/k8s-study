@@ -90,6 +90,7 @@ flask-res-mock.jsonにレスポンスを記載する。
 
 以下のコマンドでjsonサーバーを実行する
 ```
+npm install -g json-server
 json-server --watch flask-res-mock.json -p 5000
 ```
 

@@ -10,5 +10,8 @@
         ],
         "timestamp": "2024-06-23T12:37:12.749089",
         "uuid": "3c7392d6-0d0b-4236-b44a-6f496530f031"
+    },
+    "health": {
+        "res": "mock server is healty !!!"
     }
 }

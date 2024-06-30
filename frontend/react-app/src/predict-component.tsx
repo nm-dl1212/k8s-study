@@ -22,7 +22,7 @@ const PredictComponent: React.FC = () => {
 
         try {
             const res: AxiosResponse<ResponseType>
-                = await axios.post(`${import.meta.env.VITE_ML_PREDICT_URI}/predict`, {
+                = await axios.post('api/predict', {
                     input: [parseFloat(inputValue)]
                 }, {
                     headers: {
@@ -30,7 +30,6 @@ const PredictComponent: React.FC = () => {
                     },
                     timeout: 3000,
                 });
-            //const res: AxiosResponse<ResponseType> = await axios.get('http://localhost:5001/predict');
             setResponse(res.data);
             setError(null);
         } catch (err) {
@@ -43,7 +42,7 @@ const PredictComponent: React.FC = () => {
 
     const checkHealth = async (): Promise<void> => {
         try {
-            const res: AxiosResponse<ResponseType> = await axios.get(`${import.meta.env.VITE_ML_PREDICT_URI}/health`, { timeout: 3000 });
+            const res: AxiosResponse<ResponseType> = await axios.get('api/health', { timeout: 3000 });
             console.log(res.data)
             setHealthStatus('API is healthy');
         } catch (err) {
