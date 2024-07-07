@@ -46,8 +46,23 @@ metadata:
   name: mongo-pvc
   namespace: web-flask-api
 spec:
+  storageClassName: mongo-pv
   accessModes:
     - ReadWriteOnce
   resources:
     requests:
       storage: 1Gi
+---
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: mongo-pv
+  namespace: web-flask-api
+spec:
+  storageClassName: mongo-pv
+  capacity:
+    storage: 1Gi
+  accessModes:
+  - ReadWriteOnce
+  hostPath:
+    path: /data
