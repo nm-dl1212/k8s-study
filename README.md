@@ -1,5 +1,4 @@
 # kurbenetes
-
 起動
 ```
 minikube start
@@ -34,23 +33,19 @@ curl http://192.168.49.2:30080
 kubectl delete -f pod-nginx.yaml
 ```
 
-
 ## flask, mongodbを用いた機械学習推論アプリ
+
+imageレジストリをminikubeVM上のDockerに設定する。
+(以下コマンドで，環境変数DOCKER_TLS_VERIFY, DOCKER_HOST, DOCKER_CERT_PATH, DOCKER_API_VERSIONを書き換える。)
+```
+eval $(minikube docker-env)
+```
 
 imageをビルドする
 ```
 docker build -t my-application/frontend:0.0.1 ./frontend/
 docker build -t my-application/flask-app:0.0.1 ./flask-app/
 ```
-
-minikubeのdockerレジストリにimageをプッシュする
-```
-minikube image load my-application/frontend:0.0.1
-minikube image load my-application/flask-app:0.0.1
-```
-
-イメージを修正した場合，再度プッシュしても上書きされない。一度`minikube image rm ~`で削除する。
-
 
 デプロイ
 ```
@@ -62,21 +57,27 @@ Podが起動したか確認する
 kubectl get pod -A
 ```
 
-サービスを確認
+## ローカル端末（windows側）からアプリにリクエストする
+以下で，frontendのサービスをローカルの30000番ポートに転送する。
 ```
-minikube service list
-```
-
-リクエストを投げてみる
-うまくいくと予測結果が返る
-```
-curl http://192.168.49.2:30050/predict -H "Content-Type: application/json" -d '{"input": [10.0]}' 
+kubectl port-forward svc/frontend-service 30000:4173 -n web-flask-api 
 ```
 
-namespaceごと削除する
+ローカルのブラウザで`localhost:30000`にアクセスすると，フロントエンドの画面が表示される。
+(devcontainerを使っている場合は，`devcontainer.json`で`"forwardPorts": [30000]`としておく。)
+
+
+もう一つのパターンとして，フロントエンドを介さずに直接アプリサーバーにアクセスるる。
+同様の手順で，フロントエンドのサービスをローカルの30000番ポートに転送する。
 ```
-kubectl delete namespaces web-flask-api 
+kubectl port-forward svc/flask-app-service 30000:5000 -n web-flask-api 
 ```
+
+以下のようなコマンドを投げると，予測結果を得ることができる。
+```
+curl http://localhost:30000/predict -H "Content-Type: application/json" -d '{"input": [10.0]}'
+```
+
 
 # その他
 ## トラブルシューティング
@@ -88,16 +89,8 @@ kubectl logs {Pod名} -n web-flask-api
 kubectl exec -it {Pod名} -n web-flask-api -- /bin/bash
 ```
 
-
-## ローカル端末（windows側）からアプリにリクエストする
-以下でポートフォワーディングする。30000はローカル側，5000はサービスのポート
+## 終了時
+namespaceごと削除する
 ```
-kubectl port-forward svc/flask-app-service 30000:5000 -n web-flask-api 
-```
-
-devcontainerを使っている場合は，`devcontainer.json`で`"forwardPorts": [30000]`としておく。
-
-以下のようなコマンドで，予測結果を得ることができる。
-```
-curl http://localhost:30000/predict -H "Content-Type: application/json" -d '{"input": [10.0]}'
+kubectl delete namespaces web-flask-api 
 ```
