@@ -16,6 +16,7 @@ spec:
       containers:
       - name: frontend
         image: my-application/frontend:0.0.1
+        imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 4173
         env:
